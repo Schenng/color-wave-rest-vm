@@ -1,4 +1,9 @@
 from flask import Flask
+import torch
+import torchvision
+import numpy as np
+from PIL import Image
+import torchvision.transforms as transforms
 
 app = Flask(__name__)
 
