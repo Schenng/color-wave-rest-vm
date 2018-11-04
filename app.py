@@ -28,10 +28,16 @@ def process():
                        transforms.Normalize((0.5, 0.5, 0.5),
                                             (0.5, 0.5, 0.5))]
     allTransforms = transforms.Compose(transform_list)
+
+    A_img = allTransforms(A_img)
+    A_img = A_img[0, ...] * 0.299 + A_img[1, ...] * 0.587 + A_img[2, ...] * 0.114
     
     A_img = torch.stack([A_img] * 3, dim = 0).unsqueeze(0)
 
-    return send_file(A_img, mimetype='image/gif')
+    MODEL.set_input({'A': A_img, 'A_paths' : ''})
+    MODEL.test()
+
+    return 'process'
 
 @app.route('/fuse')
 def fuse():
