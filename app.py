@@ -3,6 +3,7 @@ import torch
 import torchvision
 import numpy as np
 from PIL import Image
+from io import BytesIO
 import torchvision.transforms as transforms
 
 app = Flask(__name__)
@@ -41,9 +42,7 @@ def process():
     MODEL.test()    
     visuals = MODEL.get_current_visuals()
 
-    save_images(visuals, 'bucket-fuse/', aspect_ratio=1.0, width=256)
-
-    return 'process'
+    return save_images(visuals, 'bucket-fuse/', aspect_ratio=1.0, width=256)
 
 @app.route('/fuse')
 def fuse():
@@ -70,6 +69,7 @@ def tensor2im(input_image, imtype=np.uint8):
     return image_numpy.astype(imtype)
 
 def save_images(visuals, image_path, aspect_ratio=1.0, width=256):
+    flag = 0
 
     for label, im_data in visuals.items():
         im = tensor2im(im_data)
@@ -81,4 +81,12 @@ def save_images(visuals, image_path, aspect_ratio=1.0, width=256):
             im = imresize(im, (int(h / aspect_ratio), w), interp='bicubic')
 
         image_pil = Image.fromarray(im)
-        image_pil.save(image_path + image_name)
+
+        img_io = BytesIO()
+        image_pil.save(img_io, 'JPEG', quality=70)
+        img_io.seek(0)
+        if(flag == 0):
+            flag = 1
+        else: 
+            return send_file(img_io, mimetype='image/gif') 
+        #image_pil.save(image_path + image_name)
