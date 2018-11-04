@@ -11,6 +11,11 @@ app = Flask(__name__)
 def index():
     return "Hello, World 2!"
 
+@app.route('/process')
+def process():
+    
+    return 'Process'
+
 @app.route('/image')
 def image():
     return "Image Response"
