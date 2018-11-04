@@ -1,4 +1,4 @@
-#!/Users/simon/Projects/color-wave-rest-vm/env/bin/python
+#!/home/simon/color-wave-rest-vm/env/bin/python
 
 import sys
 import getopt

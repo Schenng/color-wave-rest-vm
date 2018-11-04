@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/simon/Projects/color-wave-rest-vm/env"
+VIRTUAL_ENV="/home/simon/color-wave-rest-vm/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

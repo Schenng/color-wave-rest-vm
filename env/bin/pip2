@@ -1,4 +1,4 @@
-#!/Users/simon/Projects/color-wave-rest-vm/env/bin/python2.7
+#!/home/simon/color-wave-rest-vm/env/bin/python2
 
 # -*- coding: utf-8 -*-
 import re
