@@ -13,7 +13,6 @@ def index():
 
 @app.route('/process')
 def process():
-
     #Load an image
     A_path = './images/img_0001.jpg'
     A_img = Image.open(A_path).convert('RGB')
@@ -26,6 +25,7 @@ def process():
     allTransforms = transforms.Compose(transform_list)
 
     return 'process image'
+
 @app.route('/image')
 def image():
     return "Image Response"
