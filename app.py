@@ -66,7 +66,7 @@ def image():
 
     # Decodes image into a PIL
     imagedata = base64.b64decode(str(encodedImage))
-    A_img = Image.open(BytesIO(imagedata)).convert('RGB')
+    A_img = Image.open(BytesIO(imagedata)).convert('LA').convert('RGB')
 
     aspect_ratio = float(A_img.width) / float(A_img.height)
 
