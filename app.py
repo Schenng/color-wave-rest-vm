@@ -6,7 +6,7 @@ from PIL import Image
 from io import BytesIO
 import torchvision.transforms as transforms
 from scipy.misc import imresize
-
+import base64
 
 app = Flask(__name__)
 
@@ -71,6 +71,18 @@ def image():
     img_io.seek(0)
 
     return send_file(img_io, mimetype='image/gif') 
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    sketchBase64 = request.form["sketch"]
+    sketch = Image.open(BytesIO(base64.b64decode(sketchBase64)))
+
+
+    img_io = BytesIO()
+    sketch.save(img_io, 'JPEG', quality=70)
+    img_io.seek(0)
+    
+    return send_file(img_io, mimetype='image/gif')
 
 @app.route('/testprocess')
 def process():
