@@ -57,6 +57,19 @@ def save_images(visuals, image_path, aspect_ratio=1.0, width=256):
 def index():
     return "Color Wave Backend"
 
+#Takes image and returns.
+@app.route('/upload', methods=['POST'])
+def upload():
+    sketchBase64 = request.form["sketch"]
+    sketch = Image.open(BytesIO(base64.b64decode(sketchBase64)))
+
+
+    img_io = BytesIO()
+    sketch.save(img_io, 'JPEG', quality=70)
+    img_io.seek(0)
+    
+return send_file(img_io, mimetype='image/gif')
+
 # This takes an image, processes it, and returns it as an image
 @app.route('/image', methods=['POST'])
 def image():
