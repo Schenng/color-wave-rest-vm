@@ -7,6 +7,7 @@ from io import BytesIO
 import torchvision.transforms as transforms
 from scipy.misc import imresize
 import base64
+import datetime
 
 app = Flask(__name__)
 
@@ -55,7 +56,9 @@ def save_images(visuals, image_path, aspect_ratio=1.0, width=256):
 # Default Route
 @app.route('/')
 def index():
-    return "Color Wave Backend"
+    date = datetime.datetime.now()
+
+    return "Color Wave Backend: " + date.ctime()
 
 # This takes an image, processes it, and returns it as an image
 @app.route('/image', methods=['POST'])
