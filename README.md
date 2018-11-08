@@ -1,18 +1,14 @@
-## Flask API for Google Compute Engine (VM) ##
+## Color Wave REST API ##
 
-This is the REST API for the backend color-wave project hosted on a Google Compute Engine Instance
+This is the REST API for color-wave-android. Hosted on a Google Compute Engine Instance.
 
-To install:
+### Installation: ###
 
+#### Local ####
 1. Clone the repo
-2. Create a virtualenv (isolated environment for the project)
-  a. pip install virtualenv
-  b. cd into the cloned directory
-  c. virtualenv env (creates an envrionment called env. Your terminal should now have an (env) before the prompt)
-3. pip install -r requirements
-
-To start server:
-gunicorn app:app -b localhost:8001
+2. Activate the virtualenv - `source env/bin/activate`
+3. Install the required packages - `pip install -r requirements`
+4. Start the Flask server with gunicorn - `gunicorn app:app -b localhost:8001
 
 
 
