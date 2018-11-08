@@ -15,7 +15,9 @@ app = Flask(__name__)
 @app.before_request
 def _load_model():
     global MODEL
-    MODEL = torch.load('./bucket-fuse/model')
+
+    global edges2shoes
+    edges2shoes = torch.load('./bucket-fuse/edges2shoes')
 
 # Helper Method
 def tensor2im(input_image, imtype=np.uint8):
@@ -67,6 +69,11 @@ def image():
     # Gets the form data from the request
     encodedImage = request.form['image']
 
+    # Get the selected model
+    request_model = request.form['model']
+    if request_model == "edges2shoes":
+        MODEL = edges2shoes
+        
     # Decodes image into a PIL
     imagedata = base64.b64decode(str(encodedImage))
     A_img = Image.open(BytesIO(imagedata)).convert('LA').convert('RGB')
