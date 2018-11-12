@@ -19,6 +19,9 @@ def _load_model():
     global edges2shoes
     edges2shoes = torch.load('./bucket-fuse/edges2shoes')
 
+    global edges2handbags
+    edges2handbags = torch.load('./bucket-fuse/edges2handbags')
+
 # Helper Method
 def tensor2im(input_image, imtype=np.uint8):
     if isinstance(input_image, torch.Tensor):
@@ -73,6 +76,8 @@ def image():
     request_model = request.form['model']
     if request_model == "edges2shoes":
         MODEL = edges2shoes
+    if request_model == "edges2handbags":
+        MODEL = edges2handbags
         
     # Decodes image into a PIL
     imagedata = base64.b64decode(str(encodedImage))
@@ -184,6 +189,7 @@ def testprocess():
 
     # Put the image through the model
     MODEL.set_input({'A': A_img, 'A_paths' : ''})
+
     MODEL.test()    
     visuals = MODEL.get_current_visuals()
 
