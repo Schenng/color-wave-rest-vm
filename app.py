@@ -78,6 +78,8 @@ def image():
         MODEL = edges2shoes
     if request_model == "edges2handbags":
         MODEL = edges2handbags
+    if request_model == "edges2bracelets":
+        MODEL = edges2bracelets
         
     # Decodes image into a PIL
     imagedata = base64.b64decode(str(encodedImage))
