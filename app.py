@@ -26,7 +26,7 @@ def _load_model():
     edges2bracelets = torch.load('./bucket-fuse/edges2bracelets')
 
     global edges2dresses
-    edges2bracelets = torch.load('./bucket-fuse/edges2dresses')
+    edges2dresses = torch.load('./bucket-fuse/edges2dresses')
 
 # Helper Method
 def tensor2im(input_image, imtype=np.uint8):
