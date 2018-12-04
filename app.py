@@ -18,17 +18,17 @@ app = Flask(__name__)
 def _load_model():
     global MODEL
 
-    # global edges2shoes
-    # edges2shoes = torch.load('./bucket-fuse/edges2shoes')
+    global edges2shoes
+    edges2shoes = torch.load('./bucket-fuse/edges2shoes')
 
-    # global edges2handbags
-    # edges2handbags = torch.load('./bucket-fuse/edges2handbags')
+    global edges2handbags
+    edges2handbags = torch.load('./bucket-fuse/edges2handbags')
 
-    # global edges2bracelets
-    # edges2bracelets = torch.load('./bucket-fuse/edges2bracelets')
+    global edges2bracelets
+    edges2bracelets = torch.load('./bucket-fuse/edges2bracelets')
 
-    # global edges2dresses
-    # edges2dresses = torch.load('./bucket-fuse/edges2dresses')
+    global edges2dresses
+    edges2dresses = torch.load('./bucket-fuse/edges2dresses')
 
     global edges2watches
     edges2watches = torch.load('./bucket-fuse/edges2watches')
