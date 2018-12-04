@@ -8,6 +8,8 @@ import torchvision.transforms as transforms
 from scipy.misc import imresize
 import base64
 import datetime
+import cv2
+import numpy
 
 app = Flask(__name__)
 
@@ -16,17 +18,17 @@ app = Flask(__name__)
 def _load_model():
     global MODEL
 
-    global edges2shoes
-    edges2shoes = torch.load('./bucket-fuse/edges2shoes')
+    # global edges2shoes
+    # edges2shoes = torch.load('./bucket-fuse/edges2shoes')
 
-    global edges2handbags
-    edges2handbags = torch.load('./bucket-fuse/edges2handbags')
+    # global edges2handbags
+    # edges2handbags = torch.load('./bucket-fuse/edges2handbags')
 
-    global edges2bracelets
-    edges2bracelets = torch.load('./bucket-fuse/edges2bracelets')
+    # global edges2bracelets
+    # edges2bracelets = torch.load('./bucket-fuse/edges2bracelets')
 
-    global edges2dresses
-    edges2dresses = torch.load('./bucket-fuse/edges2dresses')
+    # global edges2dresses
+    # edges2dresses = torch.load('./bucket-fuse/edges2dresses')
 
     global edges2watches
     edges2watches = torch.load('./bucket-fuse/edges2watches')
@@ -67,6 +69,20 @@ def save_images(visuals, image_path, aspect_ratio=1.0, width=256):
             return send_file(img_io, mimetype='image/gif') 
         #image_pil.save(image_path + image_name)
 
+def remove_shadow(pil_img):
+
+    img = numpy.array(pil_img) 
+
+    dilated_img = cv2.dilate(img, np.ones((7,7), np.uint8)) 
+    bg_img = cv2.medianBlur(dilated_img, 21)
+    diff_img = 255 - cv2.absdiff(img, bg_img)
+    norm_img = diff_img.copy() # Needed for 3.x compatibility
+    cv2.normalize(diff_img, norm_img, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)
+    _, thr_img = cv2.threshold(norm_img, 230, 0, cv2.THRESH_TRUNC)
+    cv2.normalize(thr_img, thr_img, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)
+
+    return Image.fromarray(thr_img)
+
 # Default Route
 @app.route('/')
 def index():
@@ -77,6 +93,69 @@ def index():
 # This takes an image, processes it, and returns it as an image
 @app.route('/image', methods=['POST'])
 def image():
+
+    # Gets the form data from the request
+    encodedImage = request.form['image']
+
+    # Get the selected model
+    request_model = request.form['model']
+    if request_model == "edges2shoes":
+        MODEL = edges2shoes
+    if request_model == "edges2handbags":
+        MODEL = edges2handbags
+    if request_model == "edges2bracelets":
+        MODEL = edges2bracelets    
+    if request_model == "edges2dresses":
+        MODEL = edges2dresses
+    if request_model == "edges2watches":
+        MODEL = edges2watches
+        
+    # Decodes image into a PIL
+    imagedata = base64.b64decode(str(encodedImage))
+    A_img = Image.open(BytesIO(imagedata)).convert('LA').convert('RGB')
+
+    A_img = remove_shadow(A_img)
+
+    aspect_ratio = float(A_img.width) / float(A_img.height)
+
+    #Create transforms
+    transform_list = [transforms.Resize((256,256)), transforms.ToTensor(),
+                       transforms.Normalize((0.5, 0.5, 0.5),
+                                            (0.5, 0.5, 0.5))]
+    allTransforms = transforms.Compose(transform_list)
+
+    # Do transforms
+    A_img = allTransforms(A_img)
+    A_img = A_img[0, ...] * 0.299 + A_img[1, ...] * 0.587 + A_img[2, ...] * 0.114
+
+    #Some more transforms?
+    A_img = torch.stack([A_img] * 3, dim = 0).unsqueeze(0)
+
+    # Put the image through the model
+    MODEL.set_input({'A': A_img, 'A_paths' : ''})
+    MODEL.test()    
+    visuals = MODEL.get_current_visuals()
+
+    im_data = visuals['fake_B']
+
+    im = tensor2im(im_data)
+    h, w, _ = im.shape
+    if aspect_ratio > 1.0:
+        im = imresize(im, (h, int(w * aspect_ratio)), interp='bicubic')
+    if aspect_ratio < 1.0:
+        im = imresize(im, (int(h / aspect_ratio), w), interp='bicubic')
+
+    image_pil = Image.fromarray(im)
+
+    img_io = BytesIO()
+    image_pil.save(img_io, 'JPEG', quality=70)
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/gif') 
+
+# This takes an image, processes it, and returns it as an image
+@app.route('/image_backup', methods=['POST'])
+def imageBackup():
 
     # Gets the form data from the request
     encodedImage = request.form['image']
